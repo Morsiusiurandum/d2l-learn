@@ -4,12 +4,15 @@
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 
+# Remove previous ipynb_checkpoints
+#   git rm -r .ipynb_checkpoints/
+
 # IPython
 profile_default/
 ipython_config.py
 
-# Remove previous ipynb_checkpoints
-#   git rm -r .ipynb_checkpoints/
+# Virtual environments
+venv/
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
