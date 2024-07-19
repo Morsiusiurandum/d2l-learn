@@ -1,11 +1,14 @@
 ﻿import torch
 import torch
 import torchvision
+from torch import nn
 
 from torch.utils import data
 from torchvision import transforms
 
 import torch
+
+from helper.utility import Accumulator
 
 
 def sgd(params, lr, batch_size) -> None:
@@ -40,3 +43,24 @@ def accuracy(y_hat, y):
         y_hat = y_hat.argmax(axis=1)
     cmp = y_hat.type(y.dtype) == y
     return float(cmp.type(y.dtype).sum())
+
+
+def evaluate_accuracy_gpu(net, data_iter, device=None):  # @save
+    """使⽤GPU计算模型在数据集上的精度"""
+    if isinstance(net, nn.Module):
+        net.eval()  # 设置为评估模式
+    if not device:
+        device = next(iter(net.parameters())).device
+    # 正确预测的数量，总预测的数量
+    metric = Accumulator(2)
+    with torch.no_grad():
+        for x, y in data_iter:
+            if isinstance(x, list):
+                # BERT微调所需的（之后将介绍）
+                x = [x.to(device) for x in x]
+            else:
+                x = x.to(device)
+                y = y.to(device)
+                metric.add(accuracy(net(x), y), y.numel())
+    return metric[0] / metric[1]
+
